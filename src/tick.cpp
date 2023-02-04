@@ -1,7 +1,5 @@
 
 #include "tick.hpp"
-#include "controls.hpp"
-#include<iostream>
 
 game::game(window* windowArg, entity* plrArg)
     :gameWindow(windowArg), playerEntity(plrArg), playerCamera(new camera())
@@ -27,7 +25,7 @@ void game::eventHandler(SDL_Event event)
             handleKeyLift(event, playerEntity);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            handleMouseClick(playerEntity); 
+            game::addToProjectileList(handleMouseClick(playerEntity, gameWindow)); 
             break;
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&xMouse, &yMouse);
@@ -39,8 +37,16 @@ void game::eventHandler(SDL_Event event)
 
 void game::cleanUp()
 {
+    delete gameWindow;
+    delete playerCamera;
+
     std::vector<entity *>::iterator i;
     for(i = renderList.begin(); i != renderList.end(); i++)
+    {
+        delete *i;
+    }
+
+    for(i = projectileList.begin(); i != projectileList.end(); i++)
     {
         delete *i;
     }
@@ -51,10 +57,20 @@ void game::addToRenderList(entity* objectArg)
     game::renderList.push_back(objectArg);
 }
 
+void game::addToProjectileList(entity* objectArg)
+{
+    projectileList.push_back(objectArg);
+}
+
 void game::drawRenderList()
 {
     std::vector<entity *>::iterator i;
     for(i = renderList.begin(); i != renderList.end(); i++)
+    {
+        gameWindow->render(*i, playerCamera);
+    }
+
+    for(i = projectileList.begin(); i != projectileList.end(); i++)
     {
         gameWindow->render(*i, playerCamera);
     }
@@ -72,6 +88,34 @@ void game::gameTick()
 {
     playerEntity->move(playerEntity->getAccel().y * tickDelta);
     playerCamera->updateCamera(playerEntity);
+
+    if(projectileList.empty())
+        return;
+
+    for(entity* itr : projectileList)
+    {
+        itr->move(itr->getAccel().y * tickDelta);
+        itr->changeHP(itr->getHP() - 1);
+        if(itr->checkCollision(renderList.back()))
+        {
+            std::cout << "bullet hit" << std::endl;
+        }
+        if(itr->getHP() <= 0)
+        {
+            delete itr;
+            continue;
+        }
+        buffer.push_back(itr);
+    }
+
+    projectileList.clear();
+
+    for(entity* itr : buffer)
+    {
+        projectileList.push_back(itr);
+    }
+
+    buffer.clear();
 }
 
 void game::startGame()
@@ -103,8 +147,6 @@ void game::gameLoop()
             tickDelta = 0.0;
         }
     }
-    delete gameWindow;
-    delete playerCamera;
     cleanUp();
     SDL_Quit();
 }

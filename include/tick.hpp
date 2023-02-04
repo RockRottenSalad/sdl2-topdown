@@ -2,9 +2,11 @@
 
 #include<SDL2/SDL.h>
 #include<vector>
+#include<iostream>
 
 #include "window.hpp"
 #include "const.hpp"
+#include "controls.hpp"
 
 enum class gameState {PLAY, QUIT}; 
 
@@ -17,7 +19,8 @@ class game
         camera* playerCamera;
 
         std::vector<entity *> renderList;
-        std::vector<entity *> bufferList;
+        std::vector<entity *> projectileList;
+        std::vector<entity *> buffer;
 
         double fpsDelta = 0.0, tickDelta = 0.0;
         Uint64 now = SDL_GetPerformanceCounter();
@@ -30,6 +33,7 @@ class game
         void eventHandler(SDL_Event event);
         void cleanUp();
         void addToRenderList(entity* objectArg);
+        void addToProjectileList(entity* objectArg);
         void drawRenderList();
         void deltaTick();
         void gameTick();

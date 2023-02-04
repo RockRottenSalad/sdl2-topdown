@@ -8,6 +8,9 @@ vector2d::vector2d(float xArg, float yArg)
 vector2d::vector2d()
 {}
 
+vector2d::~vector2d()
+{}
+
 float vector2d::angle(vector2d vecArg)
 {
     return (atan2(this->x - vecArg.x, this->y - vecArg.y) * (180.0/M_PI)) * -1.0;
@@ -27,6 +30,11 @@ entity::entity(vector2d posArg, SDL_Texture* textureArg, SDL_Rect textureSnippet
 
 entity::entity()
 {}
+
+entity::~entity()
+{}
+
+// ENTITY GETTERS
 
 vector2d entity::getPos()
 {
@@ -53,6 +61,13 @@ SDL_Rect entity::getTextureSnippet()
     return textureSnippet;
 }
 
+short entity::getHP()
+{
+    return hp;
+}
+
+// ENTITY SETTERS
+
 void entity::changePos(vector2d posArg)
 {
     pos = posArg;
@@ -78,6 +93,11 @@ void entity::changeTextureSnippet(SDL_Rect textureSnippetArg)
     textureSnippet = textureSnippetArg;
 }
 
+void entity::changeHP(short hpArg)
+{
+    hp = hpArg;
+}
+
 void entity::move(float dist)
 {
     float rads = (angle - 90) * (M_PI / 180.0);
@@ -86,6 +106,20 @@ void entity::move(float dist)
     curPos.y += dist * sin(rads);
     
     pos = curPos;
+}
+
+bool entity::checkCollision(entity* objectArg)
+{
+    if (    this->textureSnippet.y + objectArg->textureSnippet.h <= objectArg->textureSnippet.y 
+        ||  this->textureSnippet.y >= objectArg->textureSnippet.y + objectArg->textureSnippet.h
+        ||  this->textureSnippet.x + this->textureSnippet.w <= objectArg->textureSnippet.x
+        ||  this->textureSnippet.x >= objectArg->textureSnippet.x + objectArg->textureSnippet.w
+       )
+    {
+        return false;
+    }
+
+    return true;
 }
 
 // ------------------------------------

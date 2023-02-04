@@ -18,13 +18,15 @@ int main(int argc, char ** argv)
     snip.h = 64;
 
     entity* plr = new entity(vector2d(450,450), _window->loadTexture("./res/gfx/triangle.png"), snip);
+    entity* ene = new entity(vector2d(525,450), _window->loadTexture("./res/gfx/red_triangle.png"), snip);
 
-    snip.w = 3840;
-    snip.h = 2160;
+    snip.w = 1920;
+    snip.h = 1080;
     entity* background = new entity( vector2d(0, 0), _window->loadTexture("./res/gfx/background2.jpg"), snip);
 
     game gameInstance(_window, plr);
     gameInstance.addToRenderList(background);
+    gameInstance.addToRenderList(ene);
     gameInstance.addToRenderList(plr);
 
     gameInstance.startGame();

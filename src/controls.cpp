@@ -36,10 +36,10 @@ void handleKeyLift(SDL_Event event, entity* playerEntity)
 
 void handleMouseMotion(int xMouse, int yMouse, entity* playerEntity)
 {
-    playerEntity->changeAngle(vector2d(450,450).angle(vector2d( static_cast<float>(xMouse), static_cast<float>(yMouse) )) );
+    playerEntity->changeAngle(vector2d(WINDOW_RESOLUTION_X/2,WINDOW_RESOLUTION_Y/2).angle(vector2d( static_cast<float>(xMouse), static_cast<float>(yMouse) )) );
 }
 
-void handleMouseClick(entity* playerEntity)
+entity* handleMouseClick(entity* playerEntity, window* gameWindow)
 {
-    std::cout << "click" << std::endl; 
+    return createRegularBullet(playerEntity, gameWindow);
 }

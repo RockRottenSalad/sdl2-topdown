@@ -2,7 +2,7 @@
 #include "tick.hpp"
 
 game::game(window* windowArg, entity* plrArg)
-    :gameWindow(windowArg), playerEntity(plrArg), playerCamera(new camera())
+    :gameWindow(windowArg), playerEntity(plrArg), playerCamera(new camera()), physicsHandler(new physics())
 {
     SDL_Init(SDL_INIT_VIDEO);
 }
@@ -25,7 +25,7 @@ void game::eventHandler(SDL_Event event)
             handleKeyLift(event, playerEntity);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            game::addToProjectileList(handleMouseClick(playerEntity, gameWindow)); 
+            addToProjectileList(handleMouseClick(playerEntity, gameWindow)); 
             break;
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&xMouse, &yMouse);
@@ -54,7 +54,7 @@ void game::cleanUp()
 
 void game::addToRenderList(entity* objectArg)
 {
-    game::renderList.push_back(objectArg);
+    renderList.push_back(objectArg);
 }
 
 void game::addToProjectileList(entity* objectArg)
@@ -62,10 +62,20 @@ void game::addToProjectileList(entity* objectArg)
     projectileList.push_back(objectArg);
 }
 
+void game::addToShipList(entity* objectArg)
+{
+    shipList.push_back(objectArg);
+}
+
 void game::drawRenderList()
 {
     std::vector<entity *>::iterator i;
     for(i = renderList.begin(); i != renderList.end(); i++)
+    {
+        gameWindow->render(*i, playerCamera);
+    }
+
+    for(i = shipList.begin(); i != shipList.end(); i++)
     {
         gameWindow->render(*i, playerCamera);
     }
@@ -86,7 +96,25 @@ void game::deltaTick()
 
 void game::gameTick()
 {
-    playerEntity->move(playerEntity->getAccel().y * tickDelta);
+    // ALL OF THIS SPAGHETTI CODE NEEDS TO BE REFACTORED
+    // |-> into the physics class
+    if(playerEntity->getAccelForward() == true)
+    {
+        playerEntity->changeAccel(
+            vector2d(
+             ACCELERATION * cos(playerEntity->getAngle()*2 * M_PI / 180.0f),
+             ACCELERATION * sin(playerEntity->getAngle()*2 * M_PI / 180.0f)) 
+            );
+            if(playerEntity->getSpeed().length() >= MAX_SPEED)
+                playerEntity->changeSpeed(playerEntity->getSpeed().normalized().scalar(MAX_SPEED));
+    }
+    else
+    {
+        playerEntity->changeSpeed(playerEntity->getSpeed().scalar(INTERIA));
+    }
+    
+    playerEntity->changeSpeed( playerEntity->getSpeed().add(playerEntity->getAccel()) );
+    playerEntity->move(playerEntity->getSpeed().length());
     playerCamera->updateCamera(playerEntity);
 
     if(projectileList.empty())
@@ -98,7 +126,7 @@ void game::gameTick()
         itr->changeHP(itr->getHP() - 1);
         if(itr->checkCollision(renderList.back()))
         {
-            std::cout << "bullet hit" << std::endl;
+            std::cout << "hit" << std::endl;
         }
         if(itr->getHP() <= 0)
         {

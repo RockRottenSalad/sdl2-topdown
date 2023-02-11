@@ -7,6 +7,7 @@
 #include "window.hpp"
 #include "const.hpp"
 #include "controls.hpp"
+#include "physics.hpp"
 
 enum class gameState {PLAY, QUIT}; 
 
@@ -17,9 +18,15 @@ class game
         window* gameWindow = NULL;
         entity* playerEntity;
         camera* playerCamera;
+        physics* physicsHandler;
 
+        // renderlist = background, props etc
         std::vector<entity *> renderList;
+        // ------------------- v
+        std::vector<entity *> shipList;
+        // bullets and such
         std::vector<entity *> projectileList;
+        // used for copying/moving all pointers in vector
         std::vector<entity *> buffer;
 
         double fpsDelta = 0.0, tickDelta = 0.0;
@@ -32,8 +39,11 @@ class game
         ~game();
         void eventHandler(SDL_Event event);
         void cleanUp();
+
         void addToRenderList(entity* objectArg);
         void addToProjectileList(entity* objectArg);
+        void addToShipList(entity* objectArg);
+
         void drawRenderList();
         void deltaTick();
         void gameTick();

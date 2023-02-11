@@ -1,3 +1,4 @@
+#pragma once
 
 #define WINDOW_RESOLUTION_X 900
 #define WINDOW_RESOLUTION_Y 900
@@ -9,3 +10,8 @@
 #define WINDOW_CENTER_Y WINDOW_RESOLUTION_Y/2
 
 #define STRAFE true
+
+#define MAX_SPEED 30.0f
+#define ACCELERATION 0.2f
+#define INTERIA 0.95f
+

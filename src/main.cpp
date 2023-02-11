@@ -26,8 +26,8 @@ int main(int argc, char ** argv)
 
     game gameInstance(_window, plr);
     gameInstance.addToRenderList(background);
-    gameInstance.addToRenderList(ene);
-    gameInstance.addToRenderList(plr);
+    gameInstance.addToShipList(ene);
+    gameInstance.addToShipList(plr);
 
     gameInstance.startGame();
     return 0;

@@ -4,10 +4,10 @@
 #include<vector>
 #include<iostream>
 
-#include "window.hpp"
 #include "const.hpp"
 #include "controls.hpp"
 #include "physics.hpp"
+
 
 enum class gameState {PLAY, QUIT}; 
 

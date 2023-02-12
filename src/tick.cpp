@@ -38,10 +38,16 @@ void game::eventHandler(SDL_Event event)
 void game::cleanUp()
 {
     delete gameWindow;
+    delete physicsHandler;
     delete playerCamera;
 
     std::vector<entity *>::iterator i;
     for(i = renderList.begin(); i != renderList.end(); i++)
+    {
+        delete *i;
+    }
+
+    for(i = shipList.begin(); i != shipList.end(); i++)
     {
         delete *i;
     }
@@ -96,25 +102,16 @@ void game::deltaTick()
 
 void game::gameTick()
 {
-    // ALL OF THIS SPAGHETTI CODE NEEDS TO BE REFACTORED
-    // |-> into the physics class
-    if(playerEntity->getAccelForward() == true)
+    std::vector<entity *>::iterator i;
+    for(i = shipList.begin(); i != shipList.end(); i++)
     {
-        playerEntity->changeAccel(
-            vector2d(
-             ACCELERATION * cos(playerEntity->getAngle()*2 * M_PI / 180.0f),
-             ACCELERATION * sin(playerEntity->getAngle()*2 * M_PI / 180.0f)) 
-            );
-            if(playerEntity->getSpeed().length() >= MAX_SPEED)
-                playerEntity->changeSpeed(playerEntity->getSpeed().normalized().scalar(MAX_SPEED));
+        physicsHandler->insertIntoBuffer(*i);
     }
-    else
-    {
-        playerEntity->changeSpeed(playerEntity->getSpeed().scalar(INTERIA));
-    }
-    
-    playerEntity->changeSpeed( playerEntity->getSpeed().add(playerEntity->getAccel()) );
-    playerEntity->move(playerEntity->getSpeed().length());
+
+    physicsHandler->simulateAcceleration();
+    physicsHandler->simulateInteria();
+    physicsHandler->clearBuffer();
+
     playerCamera->updateCamera(playerEntity);
 
     if(projectileList.empty())

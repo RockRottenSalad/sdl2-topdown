@@ -65,3 +65,4 @@ struct camera
     void updateCamera(entity* plr);
 };
 
+

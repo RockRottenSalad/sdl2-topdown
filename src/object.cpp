@@ -171,3 +171,4 @@ void camera::updateCamera(entity* plr)
     cameraPos.y = (plr->getPos().y + plr->getTextureSnippet().h / 2) - WINDOW_RESOLUTION_Y / 2.0;
 }
 
+

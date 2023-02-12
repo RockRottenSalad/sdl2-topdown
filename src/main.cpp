@@ -26,10 +26,13 @@ int main(int argc, char ** argv)
 
     game gameInstance(_window, plr);
     gameInstance.addToRenderList(background);
+    gameInstance.addToRenderList(new entity( vector2d(0, 1080), _window->loadTexture("./res/gfx/background2.jpg"), snip));
+
     gameInstance.addToShipList(ene);
     gameInstance.addToShipList(plr);
 
     gameInstance.startGame();
+
     return 0;
 }
 

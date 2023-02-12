@@ -12,6 +12,6 @@
 #define STRAFE true
 
 #define MAX_SPEED 30.0f
-#define ACCELERATION 0.2f
+#define ACCELERATION 0.95f
 #define INTERIA 0.95f
 

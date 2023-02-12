@@ -12,3 +12,4 @@ void handleKeyLift(SDL_Event event, entity* playerEntity);
 
 void handleMouseMotion(int xMouse, int yMouse, entity* playerEntity);
 entity* handleMouseClick(entity* playerEntity, window* gameWindow);
+
